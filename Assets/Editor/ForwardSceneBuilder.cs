@@ -65,7 +65,8 @@ public static class ForwardSceneBuilder
             "LevelSelectionScreen",
             "HowToPlayScreen",
             "GameOverScreen",
-            "VictoryScreen"
+            "VictoryScreen",
+            "SciFiBackdrop"
         };
 
         foreach (string menuObject in menuObjects)

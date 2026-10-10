@@ -29,6 +29,7 @@ public class LevelBuilder : MonoBehaviour
     private static PhysicsMaterial2D noFrictionMaterial;
     private bool applyingLevel;
     private ScreenState screenState;
+    private int currentLevel = 1;
 
     public ScreenState CurrentScreen => screenState;
     public float StartPosition => StartX;
@@ -66,6 +67,7 @@ public class LevelBuilder : MonoBehaviour
         if (GameSession.HasLaunchRequest)
         {
             int level = GameSession.ConsumeLaunchLevel();
+            currentLevel = level;
             if (player != null)
                 player.SetMenuPaused(true);
             screenState = ScreenState.Playing;
@@ -288,6 +290,7 @@ public class LevelBuilder : MonoBehaviour
             return;
 
         applyingLevel = true;
+        currentLevel = level;
         screenState = ScreenState.LevelSelection;
         Player player = FindAnyObjectByType<Player>();
         if (player != null)
@@ -298,6 +301,7 @@ public class LevelBuilder : MonoBehaviour
 
     private IEnumerator ApplyLevelNextFrame(int level)
     {
+        currentLevel = level;
         for (int i = transform.childCount - 1; i >= 0; i--)
             Destroy(transform.GetChild(i).gameObject);
 
@@ -376,7 +380,8 @@ public class LevelBuilder : MonoBehaviour
     private void RestartCurrentLevel()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameSession.StartLevel(currentLevel);
+        SceneManager.LoadScene(GameSession.GameSceneName);
     }
 
     private void CreateFacePart(Transform parent, string partName, Vector3 localPosition, Vector2 size, Color color, int sortingOffset)
