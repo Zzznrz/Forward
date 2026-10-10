@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>End-of-level trigger with a replay prompt.</summary>
 public class FinishZone : MonoBehaviour
@@ -11,6 +12,7 @@ public class FinishZone : MonoBehaviour
             return;
 
         player.CompleteLevel();
-        FindAnyObjectByType<LevelBuilder>()?.ShowCompletionScreen();
+        GameSession.SetResult(true);
+        SceneManager.LoadScene(GameSession.EndSceneName);
     }
 }

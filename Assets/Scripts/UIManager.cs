@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -58,7 +59,7 @@ public class UIManager : MonoBehaviour
         player = FindAnyObjectByType<Player>();
         CacheBackdropObjects();
         if (player != null)
-            player.Died += ShowGameOver;
+            player.Died += OnPlayerDied;
         WireButtons();
         Time.timeScale = 1f;
     }
@@ -112,7 +113,7 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         if (player != null)
-            player.Died -= ShowGameOver;
+            player.Died -= OnPlayerDied;
     }
 
     private void Start()
@@ -283,12 +284,12 @@ public class UIManager : MonoBehaviour
         RefreshPanels();
     }
 
-    private void ShowGameOver()
+    private void OnPlayerDied()
     {
-        showingGameOver = true;
-        Time.timeScale = 0f;
-        if (player != null)
-            player.SetMenuPaused(true);
+        // Death is a checkpoint respawn, not a level-ending state.
+        // Player handles the short death pause and returns to the latest checkpoint.
+        showingGameOver = false;
+        Time.timeScale = 1f;
         RefreshPanels();
     }
 
@@ -297,7 +298,7 @@ public class UIManager : MonoBehaviour
         showingHowToPlay = false;
         showingGameOver = false;
         Time.timeScale = 1f;
-        levelBuilder.ReturnToTitleFromUI();
+        SceneManager.LoadScene(GameSession.StartSceneName);
     }
 
     private static void QuitGame()

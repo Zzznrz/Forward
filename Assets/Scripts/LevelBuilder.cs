@@ -61,8 +61,19 @@ public class LevelBuilder : MonoBehaviour
             return;
 
         Time.timeScale = 1f;
-        screenState = ScreenState.Title;
+
         Player player = FindAnyObjectByType<Player>();
+        if (GameSession.HasLaunchRequest)
+        {
+            int level = GameSession.ConsumeLaunchLevel();
+            if (player != null)
+                player.SetMenuPaused(true);
+            screenState = ScreenState.Playing;
+            StartCoroutine(ApplyLevelNextFrame(level));
+            return;
+        }
+
+        screenState = ScreenState.Title;
         if (player != null)
             player.SetMenuPaused(true);
     }
@@ -341,14 +352,6 @@ public class LevelBuilder : MonoBehaviour
     public void RestartFromUI()
     {
         RestartCurrentLevel();
-    }
-
-    public void ReturnToTitleFromUI()
-    {
-        Time.timeScale = 1f;
-        screenState = ScreenState.Title;
-        FindAnyObjectByType<Player>()?.SetMenuPaused(true);
-        FindAnyObjectByType<UIManager>()?.RefreshPanels();
     }
 
     private void StartFromTitle()
